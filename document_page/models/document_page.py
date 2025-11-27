@@ -185,15 +185,20 @@ class DocumentPage(models.Model):
     @api.multi
     def _inverse_content(self):
         for rec in self:
-            if rec.type == "content" \
-                    and rec.content != rec.history_head.content:
-                rec._create_history(
-                    {
-                        "name": rec.draft_name,
-                        "summary": rec.draft_summary,
-                        "content": rec.content,
-                    }
-                )
+            # Corrige condição quando ainda não existe history_head (primeira gravação)
+            if rec.type == "content" and (not rec.history_head or rec.content != rec.history_head.content):
+                try:
+                    rec._create_history(
+                        {
+                            "name": rec.draft_name,
+                            "summary": rec.draft_summary,
+                            "content": rec.content,
+                        }
+                    )
+                except Exception:
+                    # Evita que falha silenciosa deixe conteúdo vazio depois do compute
+                    import logging
+                    logging.getLogger(__name__).exception("Falha ao criar histórico para document.page %s", rec.id)
 
     @api.multi
     def _search_content(self, operator, value):
