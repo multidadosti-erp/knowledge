@@ -1,7 +1,7 @@
 # Copyright 2014 Therp BV (<http://therp.nl>)
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import collections
+import collections.abc
 import logging
 import mimetypes
 import os.path
@@ -18,7 +18,7 @@ class IrAttachment(models.Model):
     def get_binary_extension(self, model, ids, binary_field,
                              filename_field=None):
         result = {}
-        ids_to_browse = ids if isinstance(ids, collections.Iterable) else [ids]
+        ids_to_browse = ids if isinstance(ids, collections.abc.Iterable) else [ids]
 
         # First pass: load fields in bin_size mode to avoid loading big files
         #  unnecessarily.
@@ -59,7 +59,7 @@ class IrAttachment(models.Model):
                                   mimetype)
             except ImportError:
                 (mimetype, encoding) = mimetypes.guess_type(
-                    'data:;base64,' + this[binary_field], strict=False)
+                    'data:;base64,' + str(this[binary_field]), strict=False)
                 _logger.debug('Mimetypes guessed type %s from buffer',
                               mimetype)
             extension = mimetypes.guess_extension(
@@ -67,7 +67,7 @@ class IrAttachment(models.Model):
             result[this.id] = extension
         for _id in result:
             result[_id] = (result[_id] or '').lstrip('.').lower()
-        return result if isinstance(ids, collections.Iterable) else result[ids]
+        return result if isinstance(ids, collections.abc.Iterable) else result[ids]
 
     @api.model
     def get_attachment_extension(self, ids):
