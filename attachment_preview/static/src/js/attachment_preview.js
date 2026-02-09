@@ -23,6 +23,11 @@ odoo.define('attachment_preview', function (require) {
         },
 
         getUrl: function (attachment_id, attachment_url, attachment_extension, attachment_title) {
+            if (attachment_extension === 'pdf') {
+                return '/web/static/lib/pdfjs/web/viewer.html?file=' +
+                    encodeURIComponent(attachment_url) +
+                    '#disablestream=true&disablerange=true&disableautofetch=true';
+            }
             var url = (window.location.origin || '') +
                 '/attachment_preview/static/lib/ViewerJS/index.html' +
                 '?type=' + encodeURIComponent(attachment_extension) +
