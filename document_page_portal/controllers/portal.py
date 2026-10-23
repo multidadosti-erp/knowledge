@@ -12,8 +12,8 @@ from odoo.osv.expression import OR
 
 class CustomerPortal(CustomerPortal):
 
-    def _prepare_portal_layout_values(self):
-        values = super(CustomerPortal, self)._prepare_portal_layout_values()
+    def _prepare_portal_layout_values(self, values={}):
+        values = super(CustomerPortal, self)._prepare_portal_layout_values(values)
         values['document_page_count'] = request.env[
             'document.page'].search_count([('type', '=', 'content')])
         return values
